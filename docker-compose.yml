@@ -1,0 +1,11 @@
+version: "3.7"
+
+services:
+  gotmpl:
+    build: .
+    volumes:
+     - .:/go/src/github.com/florentsolt/gotmpl:delegated
+     - $HOME/.bash_profile:/root/.bash_profile:ro
+     - $HOME/.bash_it:/root/.bash_it:ro
+    logging:
+      driver: none
