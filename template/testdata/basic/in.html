@@ -1,6 +1,6 @@
-<go package="template" />
+<go package="main" />
 <go import="strings" />
-<go func="Test1" args="title string, class string, flag bool, list []string, bar map[string]string" />
+<go func="Basic" args="title string, class string, flag bool, list []string, bar map[string]string" />
 
 <html>
 
@@ -12,8 +12,9 @@
     <h1>
         <go string="strings.TrimSpace(title)" />
     </h1>
-    <p class="$class" $class>
+    <p class="$class">
         <go if="flag || false">
+            <hr/>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
         </go>
     </p>
@@ -26,8 +27,6 @@
             </li>
         </go>
     </ul>
-
-    Let's write a blackquote ` for the fun :)
 
     <go json="bar" name="bar" />
 

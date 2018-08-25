@@ -8,13 +8,13 @@ import (
 
 var DefaultCommands = map[string]Command{
 	"package": CmdPackage,
-	"import": CmdImport,
-	"func": CmdFunc,
-	"string": CmdString,
-	"int": CmdInt,
-	"json": CmdJson,
-	"if": CmdIf,
-	"for": CmdFor,
+	"import":  CmdImport,
+	"func":    CmdFunc,
+	"string":  CmdString,
+	"int":     CmdInt,
+	"json":    CmdJson,
+	"if":      CmdIf,
+	"for":     CmdFor,
 }
 
 func CmdPackage(template *Template, token *html.Token) {
@@ -36,7 +36,7 @@ func CmdFunc(template *Template, token *html.Token) {
 func CmdString(template *Template, token *html.Token) {
 	template.Buffer.WriteString("\tbuffer.WriteString(")
 	template.Buffer.WriteString(token.Attr[0].Val)
-	template.Buffer.WriteString(")\n")	
+	template.Buffer.WriteString(")\n")
 }
 
 func CmdInt(template *Template, token *html.Token) {

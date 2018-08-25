@@ -4,9 +4,12 @@ import (
 	"testing"
 )
 
-func TestParseFile(t *testing.T) {
+var case1 = `
+<html></html>
+`
+
+func TestParse(t *testing.T) {
 	template := New()
-	template.Parse("testdata/test1.html")
-	template.Save("testdata/test1.html.go")
+	template.ParseString(case1)
 	t.Fail()
 }

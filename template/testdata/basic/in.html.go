@@ -1,18 +1,11 @@
-package testdata
+package main
 import (
 	"bytes"
 	"strings"
 	"strconv"
 	"fmt"
 )
-func Test1(title string, class string, flag bool, list []string, bar map[string]string, buffer *bytes.Buffer) {
-	buffer.WriteString(`
-`)
-	buffer.WriteString(`
-`)
-	buffer.WriteString(`
-
-`)
+func Basic(title string, class string, flag bool, list []string, bar map[string]string, buffer *bytes.Buffer) {
 	buffer.WriteString(`<html>`)
 	buffer.WriteString(`
 
@@ -40,10 +33,15 @@ func Test1(title string, class string, flag bool, list []string, bar map[string]
 	buffer.WriteString(`</h1>`)
 	buffer.WriteString(`
     `)
-	buffer.WriteString(`<p class="$class" $class="">`)
+	buffer.WriteString(`<p class="`)
+	buffer.WriteString(class)
+	buffer.WriteString(`">`)
 	buffer.WriteString(`
         `)
 	if flag || false {
+	buffer.WriteString(`
+            `)
+	buffer.WriteString(`<hr/>`)
 	buffer.WriteString(`
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
         `)
@@ -78,10 +76,6 @@ func Test1(title string, class string, flag bool, list []string, bar map[string]
 	buffer.WriteString(`</ul>`)
 	buffer.WriteString(`
 
-    Let&#39;s write a blackquote `)
-	buffer.WriteString("`")
-	buffer.WriteString(` for the fun :)
-
     `)
 	buffer.WriteString(`<pre><code>`)
 	buffer.WriteString(fmt.Sprintf(`%#v`, bar))
@@ -102,7 +96,4 @@ func Test1(title string, class string, flag bool, list []string, bar map[string]
 
 `)
 	buffer.WriteString(`</html>`)
-	buffer.WriteString(`
-
-// includes // range`)
 }

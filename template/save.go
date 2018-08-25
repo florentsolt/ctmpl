@@ -6,8 +6,6 @@ import (
 )
 
 func (template *Template) Save(file string) {
-	log.Printf("Template %#v", template)
-
 	out, err := os.Create(file)
 	if err != nil {
 		log.Println("Unable to open", file)
