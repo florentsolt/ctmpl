@@ -1,0 +1,40 @@
+<go package="template" />
+<go import="strings" />
+<go func="Test1" args="title string, class string, flag bool, list []string, bar map[string]string" />
+
+<html>
+
+<head>
+    <title></title>
+</head>
+
+<body>
+    <h1>
+        <go string="strings.TrimSpace(title)" />
+    </h1>
+    <p class="$class" $class>
+        <go if="flag || false">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+        </go>
+    </p>
+
+    <ul>
+        <go for="index, item := range list">
+            <li>
+                <go int="index" />
+                <go string="item" />
+            </li>
+        </go>
+    </ul>
+
+    Let's write a blackquote ` for the fun :)
+
+    <go json="bar" name="bar" />
+
+    <script>
+        var foo = 42;
+        var hu = foo;
+    </script>
+</body>
+
+</html>
