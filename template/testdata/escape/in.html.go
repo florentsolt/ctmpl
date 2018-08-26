@@ -16,7 +16,7 @@ func Escape(buffer *bytes.Buffer) {
 	buffer.WriteString(`<!-- in attributes -->`)
 	buffer.WriteString(`
         `)
-	buffer.WriteString(`<div class="foo`+"`"+`bar" style="$$style">`)
+	buffer.WriteString(`<div class="foo`+"`"+`bar" style="style">`)
 	buffer.WriteString(`</div>`)
 	buffer.WriteString(`
         `)

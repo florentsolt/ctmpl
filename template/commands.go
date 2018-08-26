@@ -10,8 +10,6 @@ var DefaultCommands = map[string]Command{
 	"package": CmdPackage,
 	"import":  CmdImport,
 	"func":    CmdFunc,
-	"string":  CmdString,
-	"int":     CmdInt,
 	"json":    CmdJson,
 	"if":      CmdIf,
 	"for":     CmdFor,

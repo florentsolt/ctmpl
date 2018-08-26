@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"strings"
-	"regexp"
 
 	"golang.org/x/net/html"
 )
@@ -32,9 +31,55 @@ func escapeBacktick(str string) string {
 	return strings.Replace(str, "`", "`+\"`\"+`", -1)
 }
 
-func replaceVariables(value string) string {
-	re := regexp.MustCompile(`([^\$])\$([\w\d\-\_]+)`)
-	return re.ReplaceAllString(value, "$1`)\n\tbuffer.WriteString($2)\n\tbuffer.WriteString(`")
+const (
+	CloseCurrentWrite = "`)\n"
+	StartCustomWrite = "\tbuffer.WriteString("
+	ResumeWrite = ")\n\tbuffer.WriteString(`"
+)
+
+func (template *Template) replaceVariables(text string) string {
+	var (
+		result strings.Builder
+		found int
+		in bool
+	)
+
+	for {
+		found = strings.IndexByte(text, '$')
+		if found == -1 || len(text) < found + 1 {
+			result.WriteString(text)
+			break;
+		}
+		if in == false && text[found + 1] == '$' {
+			result.WriteString(text[:found + 1])
+			text = text[found + 2:]
+			continue
+		}
+		if in == false {
+			in = true
+			result.WriteString(text[:found])
+			text = text[found + 1:]
+			continue
+		}
+		coma := strings.IndexByte(text[:found], ',')
+		if coma != -1 {
+			format := strings.TrimSpace(text[:coma])
+			expr := text[coma+1:found]
+			converted := "fmt.Sprintf(`%" + format + "`, " + expr + ")"
+			switch format {
+			case "d":
+				template.Imports["strconv"] = true
+				converted = `strconv.Itoa(` + expr + `)`
+			case "s":
+				converted = expr
+			}
+			result.WriteString(CloseCurrentWrite + StartCustomWrite + converted + ResumeWrite)
+		}
+		text = text[found + 1:]
+		in = false
+	}
+
+	return result.String()
 }
 
 func (template *Template) ParseReader(in io.Reader) *Template {
@@ -91,6 +136,7 @@ func (template *Template) ParseReader(in io.Reader) *Template {
 			if template.Trim {
 				text = strings.TrimSpace(text)
 			}
+			text = template.replaceVariables(text)
 			template.Buffer.WriteString(text)
 			template.Buffer.WriteString("`)\n")
 		} else {
@@ -99,7 +145,7 @@ func (template *Template) ParseReader(in io.Reader) *Template {
 			// ----------------------------------------------------------------
 
 			tag := escapeBacktick(token.String())
-			tag = replaceVariables(tag)
+			tag = template.replaceVariables(tag)
 			template.Buffer.WriteString("\tbuffer.WriteString(`")
 			template.Buffer.WriteString(tag)
 			template.Buffer.WriteString("`)\n")

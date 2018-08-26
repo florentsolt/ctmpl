@@ -42,8 +42,7 @@ func Basic(title string, class string, flag bool, list []string, bar map[string]
 	buffer.WriteString(`
             `)
 	buffer.WriteString(`<hr/>`)
-	buffer.WriteString(`
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+	buffer.WriteString(` Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
         `)
 }
 	buffer.WriteString(`
@@ -62,8 +61,7 @@ func Basic(title string, class string, flag bool, list []string, bar map[string]
 	buffer.WriteString(`
                 `)
 	buffer.WriteString(strconv.Itoa(index))
-	buffer.WriteString(`
-                `)
+	buffer.WriteString(` `)
 	buffer.WriteString(item)
 	buffer.WriteString(`
             `)
@@ -86,7 +84,9 @@ func Basic(title string, class string, flag bool, list []string, bar map[string]
 	buffer.WriteString(`<script>`)
 	buffer.WriteString(`
         var foo = 42;
-        var hu = foo;
+        var hu = "`)
+	buffer.WriteString(title)
+	buffer.WriteString(`";
     `)
 	buffer.WriteString(`</script>`)
 	buffer.WriteString(`
