@@ -32,7 +32,8 @@ func escapeBacktick(str string) string {
 }
 
 const (
-	CloseCurrentWrite = "`)\n"
+	CloseWrite = "`)\n"
+	StartWrite = "\tbuffer.WriteString(`"
 	StartCustomWrite = "\tbuffer.WriteString("
 	ResumeWrite = ")\n\tbuffer.WriteString(`"
 )
@@ -73,7 +74,7 @@ func (template *Template) replaceVariables(text string) string {
 			case "s":
 				converted = expr
 			}
-			result.WriteString(CloseCurrentWrite + StartCustomWrite + converted + ResumeWrite)
+			result.WriteString(CloseWrite + StartCustomWrite + converted + ResumeWrite)
 		}
 		text = text[found + 1:]
 		in = false
@@ -131,14 +132,12 @@ func (template *Template) ParseReader(in io.Reader) *Template {
 					continue
 				}
 			}
-			template.Buffer.WriteString("\tbuffer.WriteString(`")
 			text := escapeBacktick(token.Data)
 			if template.Trim {
 				text = strings.TrimSpace(text)
 			}
 			text = template.replaceVariables(text)
-			template.Buffer.WriteString(text)
-			template.Buffer.WriteString("`)\n")
+			template.Buffer.WriteString(StartWrite + text + CloseWrite)
 		} else {
 			// ----------------------------------------------------------------
 			// Other tags, looking for $variable
@@ -146,9 +145,7 @@ func (template *Template) ParseReader(in io.Reader) *Template {
 
 			tag := escapeBacktick(token.String())
 			tag = template.replaceVariables(tag)
-			template.Buffer.WriteString("\tbuffer.WriteString(`")
-			template.Buffer.WriteString(tag)
-			template.Buffer.WriteString("`)\n")
+			template.Buffer.WriteString(StartWrite + tag + CloseWrite)
 		}
 		previousToken = token
 	}

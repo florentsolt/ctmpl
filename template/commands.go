@@ -31,19 +31,6 @@ func CmdFunc(template *Template, token *html.Token) {
 	}
 }
 
-func CmdString(template *Template, token *html.Token) {
-	template.Buffer.WriteString("\tbuffer.WriteString(")
-	template.Buffer.WriteString(token.Attr[0].Val)
-	template.Buffer.WriteString(")\n")
-}
-
-func CmdInt(template *Template, token *html.Token) {
-	template.Imports["strconv"] = true
-	template.Buffer.WriteString("\tbuffer.WriteString(strconv.Itoa(")
-	template.Buffer.WriteString(token.Attr[0].Val)
-	template.Buffer.WriteString("))\n")
-}
-
 func CmdJson(template *Template, token *html.Token) {
 	template.Imports["fmt"] = true
 	template.Buffer.WriteString("\tbuffer.WriteString(`<pre><code>`)\n")
