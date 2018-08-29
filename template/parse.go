@@ -74,12 +74,11 @@ func (template *Template) replaceVariables(text string) string {
 			converted := "fmt.Sprintf(`%" + format + "`, " + expr + ")"
 			switch format {
 			case "d":
+				// Shortcut for int
 				template.HiddenImports["strconv"] = true
 				converted = `__strconv.Itoa(` + expr + `)`
-			case "f":
-				template.HiddenImports["strconv"] = true
-				converted = `__strconv.FormatFloat(` + expr + `, 'f', -1, 64)`
 			case "s":
+				// Shortcut for string
 				converted = expr
 			}
 			if escape {
