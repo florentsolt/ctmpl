@@ -1,14 +1,18 @@
-<go package="main"/>
-<go func="Escape"/>
+<go package="main" />
+<go func="Escape" args="html string"/>
 <html>
-    <body>
-        <!-- in text -->
-        test ` test
-        <!-- in attributes -->
-        <div class="foo`bar" style="style"></div>
-        <!-- in script -->
-        <script>
-            console.log("`");
-        </script>
-    </body>
+
+<body>
+    <!-- in text -->
+    test ` test
+    <!-- in attributes -->
+    <div class="foo`bar" style="style"></div>
+    <!-- in script -->
+    <script>
+        console.log("`");
+    </script>
+    <!-- escape html -->
+    $!s,html$
+</body>
+
 </html>

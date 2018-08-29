@@ -32,55 +32,74 @@ func escapeBacktick(str string) string {
 }
 
 const (
-	CloseWrite = "`)\n"
-	StartWrite = "\tbuffer.WriteString(`"
+	CloseWrite       = "`)\n"
+	StartWrite       = "\tbuffer.WriteString(`"
 	StartCustomWrite = "\tbuffer.WriteString("
-	ResumeWrite = ")\n\tbuffer.WriteString(`"
+	ResumeWrite      = ")\n\tbuffer.WriteString(`"
 )
 
 func (template *Template) replaceVariables(text string) string {
 	var (
 		result strings.Builder
-		found int
-		in bool
+		found  int
+		in     bool
 	)
 
 	for {
 		found = strings.IndexByte(text, '$')
-		if found == -1 || len(text) < found + 1 {
+		if found == -1 || len(text) < found+1 {
 			result.WriteString(text)
-			break;
+			break
 		}
-		if in == false && text[found + 1] == '$' {
-			result.WriteString(text[:found + 1])
-			text = text[found + 2:]
+		if !in && text[found+1] == '$' {
+			result.WriteString(text[:found+1])
+			text = text[found+2:]
 			continue
 		}
-		if in == false {
+		if !in {
 			in = true
 			result.WriteString(text[:found])
-			text = text[found + 1:]
+			text = text[found+1:]
 			continue
 		}
 		coma := strings.IndexByte(text[:found], ',')
 		if coma != -1 {
 			format := strings.TrimSpace(text[:coma])
-			expr := text[coma+1:found]
+			escape := false
+			if format[0] == '!' {
+				escape = true
+				format = format[1:]
+			}
+			expr := text[coma+1 : found]
 			converted := "fmt.Sprintf(`%" + format + "`, " + expr + ")"
 			switch format {
 			case "d":
-				template.Imports["strconv"] = true
-				converted = `strconv.Itoa(` + expr + `)`
+				template.HiddenImports["strconv"] = true
+				converted = `__strconv.Itoa(` + expr + `)`
+			case "f":
+				template.HiddenImports["strconv"] = true
+				converted = `__strconv.FormatFloat(` + expr + `, 'f', -1, 64)`
 			case "s":
 				converted = expr
 			}
+			if escape {
+				template.HiddenImports["html"] = true
+				converted = `__html.EscapeString(` + converted + `)`
+			}
 			result.WriteString(CloseWrite + StartCustomWrite + converted + ResumeWrite)
 		}
-		text = text[found + 1:]
+		text = text[found+1:]
 		in = false
 	}
 
 	return result.String()
+}
+
+func (template *Template) flush() {
+	if template.Html.Len() > 0 {
+		template.Buffer.WriteString(StartWrite + template.Html.String() + CloseWrite)
+	}
+	template.Html.Reset()
 }
 
 func (template *Template) ParseReader(in io.Reader) *Template {
@@ -111,6 +130,7 @@ func (template *Template) ParseReader(in io.Reader) *Template {
 				continue
 			}
 			template.debug(&token)
+			template.flush()
 			command(template, &token)
 
 		} else if token.Type == html.EndTagToken && token.Data == "go" {
@@ -119,6 +139,7 @@ func (template *Template) ParseReader(in io.Reader) *Template {
 			// ----------------------------------------------------------------
 
 			template.debug(&token)
+			template.flush()
 			template.Buffer.WriteString("}\n")
 
 		} else if token.Type == html.TextToken {
@@ -137,7 +158,7 @@ func (template *Template) ParseReader(in io.Reader) *Template {
 				text = strings.TrimSpace(text)
 			}
 			text = template.replaceVariables(text)
-			template.Buffer.WriteString(StartWrite + text + CloseWrite)
+			template.Html.WriteString(text)
 		} else {
 			// ----------------------------------------------------------------
 			// Other tags, looking for $variable
@@ -145,10 +166,11 @@ func (template *Template) ParseReader(in io.Reader) *Template {
 
 			tag := escapeBacktick(token.String())
 			tag = template.replaceVariables(tag)
-			template.Buffer.WriteString(StartWrite + tag + CloseWrite)
+			template.Html.WriteString(tag)
 		}
 		previousToken = token
 	}
+	template.flush()
 	return template
 }
 

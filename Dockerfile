@@ -5,9 +5,10 @@ RUN go get \
     golang.org/x/tools/cmd/goimports \
     github.com/golangci/golangci-lint/cmd/golangci-lint \
     github.com/rakyll/gotest \
-    golang.org/x/net/html
+    golang.org/x/net/html \
+    github.com/shiyanhui/hero/hero \
+    github.com/dchest/htmlmin
 
-EXPOSE 80
 WORKDIR /go/src/github.com/florentsolt/gotmpl
 
 RUN echo "echo -ne '\033]0;Gotmpl\007'" >> /etc/profile

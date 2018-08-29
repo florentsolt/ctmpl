@@ -1,0 +1,9 @@
+<go package="gotmpl" />
+<go import="github.com/florentsolt/gotmpl/template/testdata/benchmark/model" />
+<go func="Navigation" args="nav []*model.Navigation"/>
+
+<ul class="navigation">
+    <go for="_, item := range nav">
+        <li><a href="$s,item.Link$">$s,item.Item$</a></li>
+    </go>
+</ul>

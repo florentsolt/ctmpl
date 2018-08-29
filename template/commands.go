@@ -10,8 +10,10 @@ var DefaultCommands = map[string]Command{
 	"package": CmdPackage,
 	"import":  CmdImport,
 	"func":    CmdFunc,
+	"include": CmdInclude,
 	"json":    CmdJson,
 	"if":      CmdIf,
+	"else":    CmdElse,
 	"for":     CmdFor,
 }
 
@@ -31,6 +33,14 @@ func CmdFunc(template *Template, token *html.Token) {
 	}
 }
 
+func CmdInclude(template *Template, token *html.Token) {
+	if len(token.Attr) > 1 && token.Attr[1].Key == "args" {
+		template.Buffer.WriteString("\t " + token.Attr[0].Val + "(" + token.Attr[1].Val + ", buffer)\n")
+	} else {
+		template.Buffer.WriteString("\t " + token.Attr[0].Val + "(buffer)\n")
+	}
+}
+
 func CmdJson(template *Template, token *html.Token) {
 	template.Imports["fmt"] = true
 	template.Buffer.WriteString("\tbuffer.WriteString(`<pre><code>`)\n")
@@ -43,6 +53,13 @@ func CmdIf(template *Template, token *html.Token) {
 		log.Fatal("<go if> should not auto close")
 	}
 	template.Buffer.WriteString("\tif " + token.Attr[0].Val + " {\n")
+}
+
+func CmdElse(template *Template, token *html.Token) {
+	if token.Type != html.SelfClosingTagToken {
+		log.Fatal("<go else> should auto close")
+	}
+	template.Buffer.WriteString("\t} else {\n")
 }
 
 func CmdFor(template *Template, token *html.Token) {

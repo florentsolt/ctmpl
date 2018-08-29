@@ -1,0 +1,16 @@
+<go package="gotmpl" />
+<go import="github.com/florentsolt/gotmpl/template/testdata/benchmark/model" />
+<go func="SimpleQtc" args="u *model.User" />
+
+<html>
+    <body>
+        <h1>$s,u.FirstName$</h1>
+
+        <p>Here's a list of your favorite colors:</p>
+        <ul>
+            <go for="_, colorName := range u.FavoriteColors">
+                <li>$s,colorName$</li>
+            </go>
+        </ul>
+    </body>
+</html>

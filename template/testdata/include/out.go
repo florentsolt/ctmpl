@@ -7,6 +7,6 @@
 
 	func main() {
 		buffer := new(bytes.Buffer)
-		Escape("<script></script>", buffer)
+		Index(buffer)
 		buffer.WriteTo(os.Stdout)
 	}

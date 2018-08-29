@@ -7,11 +7,12 @@ GOLINT		:= golangci-lint run
 GOVET       := go vet
 GODIRS		:= $(shell go list ./...)
 GODEPS		:= $(shell go list -f '{{ join .Deps "\n" }}' ./... | sort | uniq | grep "github.com/florentsolt")
+GOBENCH     := gotest -bench=.
 
 ifdef TEST
-GOTEST      := gotest -p 1 -run ${TEST}
+GOTEST      := gotest -run ${TEST}
 else
-GOTEST      := gotest -p 1
+GOTEST      := gotest
 endif
 
 .PHONY: all fmt lint vet install
@@ -30,7 +31,16 @@ lint:
 vet:
 	@$(GOVET) $(GODIRS) $(GODEPS)
 
-test:
+test: install
+	@find template/testdata -name *.html.go -delete
+	@cd template/testdata/benchmark/hero && hero -pkgname hero &> /dev/null
+	@cd template/testdata/benchmark/gotmpl && gotmpl &> /dev/null
 	@$(GOTEST) $(GODIRS) $(GODEPS)
+
+bench: install
+	@find template/testdata -name *.html.go -delete
+	@cd template/testdata/benchmark/hero && hero -pkgname hero &> /dev/null
+	@cd template/testdata/benchmark/gotmpl && gotmpl &> /dev/null
+	@$(GOBENCH) $(GODIRS) $(GODEPS)
 
 include $(wildcard *.mk)

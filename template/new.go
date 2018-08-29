@@ -6,9 +6,10 @@ import (
 
 func New() *Template {
 	return &Template{
-		Imports:  map[string]bool{"bytes": true},
-		Buffer:   new(bytes.Buffer),
-		Commands: DefaultCommands,
+		Imports:       map[string]bool{},
+		HiddenImports: map[string]bool{"bytes": true},
+		Buffer:        new(bytes.Buffer),
+		Commands:      DefaultCommands,
 		SilentTags: map[string]bool{
 			"package": true,
 			"import":  true,

@@ -11,7 +11,7 @@ var case1 = `
 func TestParse(t *testing.T) {
 	template := New()
 	template.ParseString(case1)
-	t.Fail()
+	// t.Fail()
 }
 
 func TestReplaceVariables(t *testing.T) {
@@ -19,8 +19,8 @@ func TestReplaceVariables(t *testing.T) {
 
 	cases := map[string]string{
 		"lorem ipsum $s,foo$$s,foo$ lorem ipsum": "lorem ipsum `)\n\tbuffer.WriteString(foo)\n\tbuffer.WriteString(``)\n\tbuffer.WriteString(foo)\n\tbuffer.WriteString(` lorem ipsum",
-		"lorem ipsum $$ lorem ipsum": "lorem ipsum $ lorem ipsum",
-		"lorem ipsum $s,foo$ lorem ipsum": "lorem ipsum `)\n\tbuffer.WriteString(foo)\n\tbuffer.WriteString(` lorem ipsum",
+		"lorem ipsum $$ lorem ipsum":             "lorem ipsum $ lorem ipsum",
+		"lorem ipsum $s,foo$ lorem ipsum":        "lorem ipsum `)\n\tbuffer.WriteString(foo)\n\tbuffer.WriteString(` lorem ipsum",
 	}
 	for test, expected := range cases {
 		result := template.replaceVariables(test)
