@@ -5,6 +5,7 @@ import (
 	"os"
 )
 
+// Save write the generated go file in the given filename
 func (template *Template) Save(file string) {
 	out, err := os.Create(file)
 	if err != nil {
@@ -17,10 +18,10 @@ func (template *Template) Save(file string) {
 	out.WriteString("// DO NOT EDIT, I MEAN IT'S USELESS :)\n\n")
 	out.WriteString("package " + template.Package + "\n")
 	out.WriteString("import (\n")
-	for name, _ := range template.HiddenImports {
+	for name := range template.HiddenImports {
 		out.WriteString("\t__" + name + " \"" + name + "\"\n")
 	}
-	for name, _ := range template.Imports {
+	for name := range template.Imports {
 		out.WriteString("\t\"" + name + "\"\n")
 	}
 	out.WriteString(")\n")

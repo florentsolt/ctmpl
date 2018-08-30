@@ -6,8 +6,10 @@ import (
 	"strings"
 )
 
+// Command represents the default signature of any commands
 type Command func(template *Template, token *html.Token)
 
+// Template represents a full template with its configuration and parsed buffer
 type Template struct {
 	Package       string
 	Imports       map[string]bool
@@ -19,19 +21,7 @@ type Template struct {
 	SilentTags    map[string]bool
 	Trim          bool
 	Debug         bool
-	Html          strings.Builder
-}
-
-// EnableTrim enables trim mode, all useless spaces will be removed
-// Needs to be called before any Parse methods
-func (template *Template) EnableTrim() *Template {
-	template.Trim = true
-	return template
-}
-
-// EnableDebug enables debug mode, a comment will precede all <go> tags substitutions
-// Needs to be called before any Parse methods
-func (template *Template) EnableDebug() *Template {
-	template.Debug = true
-	return template
+	HTML          strings.Builder
+	Expr	      string
+	Tag       	  string
 }

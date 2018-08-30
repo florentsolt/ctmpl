@@ -1,13 +1,17 @@
-GOPATH 		:= /go
-GOGET 		:= go get -u
-GOINSTALL   := go install
-GOCLEAN     := go clean
-GOFMT 		:= go fmt
-GOLINT		:= golangci-lint run
-GOVET       := go vet
-GODIRS		:= $(shell go list ./...)
-GODEPS		:= $(shell go list -f '{{ join .Deps "\n" }}' ./... | sort | uniq | grep "github.com/florentsolt")
-GOBENCH     := gotest -bench=.
+DOCKER					:= docker
+DOCKER_IMAGE			:= gotmpl:latest
+GOGET 					:= go get -u
+GOINSTALL   			:= go install
+GOCLEAN   				:= go clean
+GOFMT 					:= go fmt
+GOLANGCLILINT			:= golangci-lint run
+GOLINT					:= golint
+GOVET       			:= go vet
+GODIRS					:= ./...
+GOBENCH     			:= gotest -bench=.
+GODOC 					:= godoc -templates ./doc
+SED_TOC_LINKS 			:= sed -i -e 's/\]\(.*\)/\]\L\1/'
+SED_EMPTY_LINES_CODE 	:= sed -i -e 's/\([[:alnum:]]\)```$$/\1\n```/'
 
 ifdef TEST
 GOTEST      := gotest -run ${TEST}
@@ -15,32 +19,45 @@ else
 GOTEST      := gotest
 endif
 
-.PHONY: all fmt lint vet install
+.PHONY: all fmt lint vet install doc $(GODIRS) docker-build docker-run 
 
-all: fmt install
+all: fmt vet lint install
+
+docker-build:
+	@$(DOCKER) build . -t $(DOCKER_IMAGE)
+
+docker-run:
+	@$(DOCKER) run -it -v $$PWD:/go/src/github.com/florentsolt/gotmpl:delegated gotmpl:latest 
 
 install:
 	@$(GOINSTALL) ./...
 
 fmt:
-	@$(GOFMT) $(GODIRS) $(GODEPS)
+	@$(GOFMT) $(GODIRS)
 
 lint:
-	@cd $$GOPATH/src && $(GOLINT) $(GODIRS) $(GODEPS)
+	@$(GOLANGCLILINT) $(GODIRS)
 
 vet:
-	@$(GOVET) $(GODIRS) $(GODEPS)
+	@$(GOVET) $(GODIRS)
 
 test: install
 	@find template/testdata -name *.html.go -delete
 	@cd template/testdata/benchmark/hero && hero -pkgname hero &> /dev/null
 	@cd template/testdata/benchmark/gotmpl && gotmpl &> /dev/null
-	@$(GOTEST) $(GODIRS) $(GODEPS)
+	@$(GOTEST) $(GODIRS)
 
 bench: install
 	@find template/testdata -name *.html.go -delete
 	@cd template/testdata/benchmark/hero && hero -pkgname hero &> /dev/null
 	@cd template/testdata/benchmark/gotmpl && gotmpl &> /dev/null
-	@$(GOBENCH) $(GODIRS) $(GODEPS)
+	@$(GOBENCH) $(GODIRS)
 
-include $(wildcard *.mk)
+doc:
+	@for i in $(shell go list $(GODIRS)); do \
+		$(GOLINT) $$i; \
+		$(GODOC) $$i > $$GOPATH/src/$$i/README.md; \
+		$(SED_TOC_LINKS) $$GOPATH/src/$$i/README.md; \
+		$(SED_EMPTY_LINES_CODE) $$GOPATH/src/$$i/README.md; \
+	done
+

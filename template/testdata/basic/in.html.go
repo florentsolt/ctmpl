@@ -5,8 +5,8 @@ package main
 import (
 	__bytes "bytes"
 	__strconv "strconv"
+	__fmt "fmt"
 	"strings"
-	"fmt"
 )
 func Basic(title string, class string, flag bool, list []string, bar map[string]string, nbi int, nbf float64, buffer *__bytes.Buffer) {
 	buffer.WriteString(`<html>
@@ -49,11 +49,7 @@ func Basic(title string, class string, flag bool, list []string, bar map[string]
 	buffer.WriteString(`
     </ul>
 
-    `)
-	buffer.WriteString(`<pre><code>`)
-	buffer.WriteString(fmt.Sprintf(`%#v`, bar))
-	buffer.WriteString(`</code></pre>`)
-	buffer.WriteString(`
+    
 
     <script>
         var foo = 42;
@@ -61,7 +57,7 @@ func Basic(title string, class string, flag bool, list []string, bar map[string]
 	buffer.WriteString(__strconv.Itoa(nbi))
 	buffer.WriteString(`;
         var nbf = `)
-	buffer.WriteString(__strconv.FormatFloat(nbf, 'f', -1, 64))
+	buffer.WriteString(__fmt.Sprintf(`%f`, nbf))
 	buffer.WriteString(`;
         var hu = "`)
 	buffer.WriteString(title)

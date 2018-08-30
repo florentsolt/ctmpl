@@ -32,13 +32,17 @@ func escapeBacktick(str string) string {
 }
 
 const (
-	CloseWrite       = "`)\n"
+	// StartWrite is what starts a writing sequence in the buffer
 	StartWrite       = "\tbuffer.WriteString(`"
+	// CloseWrite is what ends a writing sequence in the buffer
+	CloseWrite       = "`)\n"
+	// StartCustomWrite is what starts a custom (ie not a strinc) sequence in the buffer (for ex. an expression)
 	StartCustomWrite = "\tbuffer.WriteString("
+	// ResumeWrite is usually ends a custom write and goes back to a normal writing
 	ResumeWrite      = ")\n\tbuffer.WriteString(`"
 )
 
-func (template *Template) replaceVariables(text string) string {
+func (template *Template) replaceExpressions(text string) string {
 	var (
 		result strings.Builder
 		found  int
@@ -46,12 +50,12 @@ func (template *Template) replaceVariables(text string) string {
 	)
 
 	for {
-		found = strings.IndexByte(text, '$')
-		if found == -1 || len(text) < found+1 {
+		found = strings.Index(text, template.Expr)
+		if found == -1 || len(text) < found+len(template.Expr) {
 			result.WriteString(text)
 			break
 		}
-		if !in && text[found+1] == '$' {
+		if !in && text[found+1:found+1+len(template.Expr)] == template.Expr {
 			result.WriteString(text[:found+1])
 			text = text[found+2:]
 			continue
@@ -71,7 +75,7 @@ func (template *Template) replaceVariables(text string) string {
 				format = format[1:]
 			}
 			expr := text[coma+1 : found]
-			converted := "fmt.Sprintf(`%" + format + "`, " + expr + ")"
+			converted := "__fmt.Sprintf(`%" + format + "`, " + expr + ")"
 			switch format {
 			case "d":
 				// Shortcut for int
@@ -80,6 +84,8 @@ func (template *Template) replaceVariables(text string) string {
 			case "s":
 				// Shortcut for string
 				converted = expr
+			default:
+				template.HiddenImports["fmt"] = true
 			}
 			if escape {
 				template.HiddenImports["html"] = true
@@ -95,12 +101,13 @@ func (template *Template) replaceVariables(text string) string {
 }
 
 func (template *Template) flush() {
-	if template.Html.Len() > 0 {
-		template.Buffer.WriteString(StartWrite + template.Html.String() + CloseWrite)
+	if template.HTML.Len() > 0 {
+		template.Buffer.WriteString(StartWrite + template.HTML.String() + CloseWrite)
 	}
-	template.Html.Reset()
+	template.HTML.Reset()
 }
 
+// ParseReader parse the given io.Reader
 func (template *Template) ParseReader(in io.Reader) *Template {
 	tokenizer := html.NewTokenizer(in)
 	previousToken := html.Token{}
@@ -115,7 +122,7 @@ func (template *Template) ParseReader(in io.Reader) *Template {
 		}
 		token := tokenizer.Token()
 
-		if (token.Type == html.StartTagToken || token.Type == html.SelfClosingTagToken) && token.Data == "go" {
+		if (token.Type == html.StartTagToken || token.Type == html.SelfClosingTagToken) && token.Data == template.Tag {
 			// ----------------------------------------------------------------
 			// Open or SelfClosing <go>
 			// ----------------------------------------------------------------
@@ -132,7 +139,7 @@ func (template *Template) ParseReader(in io.Reader) *Template {
 			template.flush()
 			command(template, &token)
 
-		} else if token.Type == html.EndTagToken && token.Data == "go" {
+		} else if token.Type == html.EndTagToken && token.Data == template.Tag {
 			// ----------------------------------------------------------------
 			// Close </go>
 			// ----------------------------------------------------------------
@@ -156,16 +163,16 @@ func (template *Template) ParseReader(in io.Reader) *Template {
 			if template.Trim {
 				text = strings.TrimSpace(text)
 			}
-			text = template.replaceVariables(text)
-			template.Html.WriteString(text)
+			text = template.replaceExpressions(text)
+			template.HTML.WriteString(text)
 		} else {
 			// ----------------------------------------------------------------
-			// Other tags, looking for $variable
+			// Other tags, looking for $expression$
 			// ----------------------------------------------------------------
 
 			tag := escapeBacktick(token.String())
-			tag = template.replaceVariables(tag)
-			template.Html.WriteString(tag)
+			tag = template.replaceExpressions(tag)
+			template.HTML.WriteString(tag)
 		}
 		previousToken = token
 	}
@@ -173,6 +180,7 @@ func (template *Template) ParseReader(in io.Reader) *Template {
 	return template
 }
 
+// ParseFile parse the given file
 func (template *Template) ParseFile(file string) *Template {
 	in, err := os.Open(file)
 	if err != nil {
@@ -183,6 +191,7 @@ func (template *Template) ParseFile(file string) *Template {
 	return template.ParseReader(in)
 }
 
+// ParseString parse the given string
 func (template *Template) ParseString(data string) *Template {
 	return template.ParseReader(strings.NewReader(data))
 }

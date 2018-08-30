@@ -4,6 +4,7 @@ import (
 	"bytes"
 )
 
+// New returns a fresh template ready use with default values
 func New() *Template {
 	return &Template{
 		Imports:       map[string]bool{},
@@ -17,5 +18,7 @@ func New() *Template {
 		},
 		Trim:  false,
 		Debug: false,
+		Expr: "$",
+		Tag: "go",
 	}
 }

@@ -14,8 +14,8 @@ func TestParse(t *testing.T) {
 	// t.Fail()
 }
 
-func TestReplaceVariables(t *testing.T) {
-	var template *Template
+func TestReplaceExpressions(t *testing.T) {
+	template := New()
 
 	cases := map[string]string{
 		"lorem ipsum $s,foo$$s,foo$ lorem ipsum": "lorem ipsum `)\n\tbuffer.WriteString(foo)\n\tbuffer.WriteString(``)\n\tbuffer.WriteString(foo)\n\tbuffer.WriteString(` lorem ipsum",
@@ -23,7 +23,7 @@ func TestReplaceVariables(t *testing.T) {
 		"lorem ipsum $s,foo$ lorem ipsum":        "lorem ipsum `)\n\tbuffer.WriteString(foo)\n\tbuffer.WriteString(` lorem ipsum",
 	}
 	for test, expected := range cases {
-		result := template.replaceVariables(test)
+		result := template.replaceExpressions(test)
 		if result != expected {
 			t.Errorf("Result does not match, got %#v, expected %#v\n", result, expected)
 		}

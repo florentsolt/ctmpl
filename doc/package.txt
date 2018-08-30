@@ -1,0 +1,192 @@
+{{$info := .}}{{$filtered := .IsFiltered}}{{/*
+
+---------------------------------------
+
+*/}}{{if $filtered}}{{range .PAst}}{{range .Decls}}{{node $info .}}
+
+{{end}}{{end}}{{else}}{{with .PAst}}{{range $filename, $ast := .}}{{$filename}}:
+{{node $ $ast}}{{end}}{{end}}{{end}}{{/*
+
+---------------------------------------
+
+*/}}{{if and $filtered (not (or .PDoc .PAst))}}No match found.
+{{end}}{{with .PDoc}}{{if $.IsMain}}
+
+{{comment_text .Doc "    " "\t"}}
+{{else}}{{if not $filtered}}
+
+# package {{html .Name}}
+`import "{{html .ImportPath}}"`
+
+{{if .Doc}}
+```
+{{comment_text .Doc "" ""}}
+{{example_text $ "" ""}}```
+{{end}}
+
+{{end}}{{/*
+
+---------------------------------------
+
+*/}}
+
+## Index 
+{{if .Consts}}- [Constants](#constants){{end}}
+{{if .Vars}}- [Variables](#variables){{end}}
+{{if .Funcs}}- [Functions](#functions)
+{{range .Funcs}}{{$name_html := html .Name}}  - [{{node_html $ .Decl false | sanitize}}](#func-{{$name_html}})
+{{end}}
+{{end}}
+{{if .Types}}- [Types](#types)
+{{range .Types}}{{$tname_html := html .Name}}  - [type {{$tname_html}}](#type-{{$tname_html}})
+{{range .Funcs}}{{$name_html := html .Name}}    - [{{node_html $ .Decl false | sanitize}}](#func-{{$name_html}})
+{{end}}
+{{range .Methods}}{{$name_html := html .Name}}    - [{{node_html $ .Decl false | sanitize}}](#func-{{$tname_html}}{{$name_html}})
+{{end}}
+{{end}}
+{{end}}
+{{if $.Notes}}
+	{{range $marker, $item := $.Notes}}
+	<dd><a href="#pkg-note-{{$marker}}">{{noteTitle $marker | html}}s</a></dd>
+	{{end}}
+{{end}}
+{{if $.Examples}}
+* [Examples](#examples)
+{{end}}
+{{if $.Dirs}}
+* [Directories](#directories)
+{{end}}
+
+{{/*
+
+---------------------------------------
+
+*/}}{{with .Consts}}{{if not $filtered}}## Constants
+
+{{end}}{{range .}}
+``` go
+{{node $ .Decl}}
+```
+{{comment_text .Doc "" ""}}
+{{end}}{{end}}{{/*
+
+---------------------------------------
+
+*/}}{{with .Vars}}{{if not $filtered}}## Variables
+
+{{end}}{{range .}}
+``` go
+{{node $ .Decl}}
+```
+{{comment_text .Doc "" ""}}
+{{end}}{{end}}{{/*
+
+---------------------------------------
+
+*/}}{{with .Funcs}}{{if not $filtered}}## Functions
+
+{{end}}{{range .}}
+{{$name_html := html .Name}}
+### func {{$name_html}}
+``` go
+{{node $ .Decl}}
+```
+{{comment_text .Doc "" ""}}
+{{example_text $ .Name "    "}}{{end}}{{end}}{{/*
+
+---------------------------------------
+
+*/}}{{with .Types}}{{if not $filtered}}## Types
+
+{{end}}{{range .}}
+{{$tname_html := html .Name}}
+### type {{$tname_html}}
+``` go
+{{node $ .Decl}}```
+{{comment_text .Doc "" ""}}
+{{/*
+
+---------------------------------------
+
+*/}}{{if .Consts}}
+{{range .Consts}}
+``` go
+{{node $ .Decl}}
+```
+{{comment_text .Doc "" ""}}
+{{end}}{{end}}{{/*
+
+---------------------------------------
+
+*/}}{{if .Vars}}
+{{range .Vars}}
+``` go
+{{node $ .Decl}}
+```
+{{comment_text .Doc "" ""}}
+{{range $name := .Names}}{{example_text $ $name "    "}}{{end}}{{end}}{{end}}{{/*
+
+---------------------------------------
+
+*/}}{{if .Funcs}}
+{{range .Funcs}}
+{{$name_html := html .Name}}
+#### func {{$name_html}}
+``` go
+{{node $ .Decl}}
+```
+{{comment_text .Doc "" ""}}
+{{example_text $ .Name "    "}}{{end}}{{end}}{{/*
+
+---------------------------------------
+
+*/}}{{if .Methods}}
+{{range .Methods}}
+{{$name_html := html .Name}}
+#### func {{$tname_html}}.{{$name_html}}
+``` go
+{{node $ .Decl}}
+```
+{{comment_text .Doc "" ""}}
+{{$name := printf "%s_%s" $tname_html .Name}}
+{{example_text $ $name "    "}}
+{{end}}
+{{end}}{{/*
+
+---------------------------------------
+
+*/}}{{end}}{{end}}{{/*
+
+---------------------------------------
+
+*/}}{{if and $filtered (not (or .Consts (or .Vars (or .Funcs .Types))))}}No match found.
+{{end}}{{/*
+
+---------------------------------------
+
+*/}}{{end}}{{/*
+
+---------------------------------------
+
+*/}}{{with $.Notes}}
+{{range $marker, $content := .}}
+{{$marker}}S
+
+{{range $content}}{{comment_text .Body "   " "\t"}}
+{{end}}{{end}}{{end}}{{end}}{{/*
+
+---------------------------------------
+
+*/}}{{if not $filtered}}{{with .Dirs}}## Directories
+{{if $.DirFlat}}{{range .List}}{{if .HasPkg}}
+	{{.Path}}{{end}}{{end}}
+{{else}}{{range .List}}
+{{repeat `  ` .Depth}}* [{{.Name}}]({{.Name}}){{end}}
+{{end}}{{end}}{{/*
+
+---------------------------------------
+
+*/}}{{end}}{{/*
+Make sure there is no newline at the end of this file.
+perl -i -pe 'chomp if eof' package.txt
+*/}}

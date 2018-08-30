@@ -3,9 +3,9 @@
 
 package gotmpl
 import (
+	__bytes "bytes"
 	__html "html"
 	__strconv "strconv"
-	__bytes "bytes"
 	"github.com/florentsolt/gotmpl/template/testdata/benchmark/model"
 )
 func Index(u *model.User, nav []*model.Navigation, title string, buffer *__bytes.Buffer) {
