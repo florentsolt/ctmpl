@@ -2,9 +2,11 @@
 // DO NOT EDIT, I MEAN IT'S USELESS :)
 
 package gotmpl
+
 import (
 	__bytes "bytes"
 )
+
 func Footer(buffer *__bytes.Buffer) {
 	buffer.WriteString(`<div class="footer">copyright 2016</div>`)
 }

@@ -2,21 +2,23 @@
 // DO NOT EDIT, I MEAN IT'S USELESS :)
 
 package main
+
 import (
 	__bytes "bytes"
 	__html "html"
 )
+
 func Escape(html string, buffer *__bytes.Buffer) {
 	buffer.WriteString(`<html>
 
 <body>
     <!-- in text -->
-    test `+"`"+` test
+    test ` + "`" + ` test
     <!-- in attributes -->
-    <div class="foo`+"`"+`bar" style="style"></div>
+    <div class="foo` + "`" + `bar" style="style"></div>
     <!-- in script -->
     <script>
-        console.log("`+"`"+`");
+        console.log("` + "`" + `");
     </script>
     <!-- escape html -->
     `)

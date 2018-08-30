@@ -2,9 +2,11 @@
 // DO NOT EDIT, I MEAN IT'S USELESS :)
 
 package main
+
 import (
 	__bytes "bytes"
 )
+
 func Body(buffer *__bytes.Buffer) {
 	buffer.WriteString(`<p>
     Nice body!

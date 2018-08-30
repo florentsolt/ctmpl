@@ -2,16 +2,18 @@
 // DO NOT EDIT, I MEAN IT'S USELESS :)
 
 package main
+
 import (
 	__bytes "bytes"
 )
+
 func Index(buffer *__bytes.Buffer) {
 	buffer.WriteString(`<!DOCTYPE html>
 <html>
 
 <body>
     `)
-	 Body(buffer)
+	Body(buffer)
 	buffer.WriteString(`
 </body>
 

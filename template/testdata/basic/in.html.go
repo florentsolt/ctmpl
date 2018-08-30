@@ -2,12 +2,14 @@
 // DO NOT EDIT, I MEAN IT'S USELESS :)
 
 package main
+
 import (
 	__bytes "bytes"
-	__strconv "strconv"
 	__fmt "fmt"
+	__strconv "strconv"
 	"strings"
 )
+
 func Basic(title string, class string, flag bool, list []string, bar map[string]string, nbi int, nbf float64, buffer *__bytes.Buffer) {
 	buffer.WriteString(`<html>
 
@@ -26,26 +28,26 @@ func Basic(title string, class string, flag bool, list []string, bar map[string]
 	buffer.WriteString(`">
         `)
 	if flag || false {
-	buffer.WriteString(`
+		buffer.WriteString(`
             <hr/> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
         `)
-}
+	}
 	buffer.WriteString(`
     </p>
 
     <ul>
         `)
 	for index, item := range list {
-	buffer.WriteString(`
+		buffer.WriteString(`
             <li>
                 `)
-	buffer.WriteString(__strconv.Itoa(index))
-	buffer.WriteString(` `)
-	buffer.WriteString(item)
-	buffer.WriteString(`
+		buffer.WriteString(__strconv.Itoa(index))
+		buffer.WriteString(` `)
+		buffer.WriteString(item)
+		buffer.WriteString(`
             </li>
         `)
-}
+	}
 	buffer.WriteString(`
     </ul>
 

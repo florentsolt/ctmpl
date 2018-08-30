@@ -2,12 +2,14 @@
 // DO NOT EDIT, I MEAN IT'S USELESS :)
 
 package gotmpl
+
 import (
 	__bytes "bytes"
+	"github.com/florentsolt/gotmpl/template/testdata/benchmark/model"
 	__html "html"
 	__strconv "strconv"
-	"github.com/florentsolt/gotmpl/template/testdata/benchmark/model"
 )
+
 func Index(u *model.User, nav []*model.Navigation, title string, buffer *__bytes.Buffer) {
 	buffer.WriteString(`<!DOCTYPE html>
 <html>
@@ -15,13 +17,13 @@ func Index(u *model.User, nav []*model.Navigation, title string, buffer *__bytes
 
 <header>
     `)
-	 Header(title, buffer)
+	Header(title, buffer)
 	buffer.WriteString(`
 </header>
 
 <nav>
     `)
-	 Navigation(nav, buffer)
+	Navigation(nav, buffer)
 	buffer.WriteString(`
 </nav>
 
@@ -41,36 +43,36 @@ func Index(u *model.User, nav []*model.Navigation, title string, buffer *__bytes
 	</div>
 
     `)
-	for i := 1; i <= 5; i++  {
-	buffer.WriteString(`
+	for i := 1; i <= 5; i++ {
+		buffer.WriteString(`
         `)
-	if i == 1 {
-	buffer.WriteString(`
+		if i == 1 {
+			buffer.WriteString(`
             <p>`)
-	buffer.WriteString(u.FirstName)
-	buffer.WriteString(` has `)
-	buffer.WriteString(__strconv.Itoa(i))
-	buffer.WriteString(` message</p>
+			buffer.WriteString(u.FirstName)
+			buffer.WriteString(` has `)
+			buffer.WriteString(__strconv.Itoa(i))
+			buffer.WriteString(` message</p>
         `)
-	} else {
-	buffer.WriteString(`
+		} else {
+			buffer.WriteString(`
             <p>`)
-	buffer.WriteString(u.FirstName)
-	buffer.WriteString(` has `)
-	buffer.WriteString(__strconv.Itoa(i))
-	buffer.WriteString(` messages</p>
+			buffer.WriteString(u.FirstName)
+			buffer.WriteString(` has `)
+			buffer.WriteString(__strconv.Itoa(i))
+			buffer.WriteString(` messages</p>
         `)
-}
-	buffer.WriteString(`
+		}
+		buffer.WriteString(`
     `)
-}
+	}
 	buffer.WriteString(`
 </div>
 </section>
 
 <footer>
     `)
-	 Footer(buffer)
+	Footer(buffer)
 	buffer.WriteString(`
 </footer>
 

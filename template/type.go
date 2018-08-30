@@ -22,6 +22,6 @@ type Template struct {
 	Trim          bool
 	Debug         bool
 	HTML          strings.Builder
-	Expr	      string
-	Tag       	  string
+	Expr          string
+	Tag           string
 }

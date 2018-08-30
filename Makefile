@@ -3,7 +3,7 @@ DOCKER_IMAGE			:= gotmpl:latest
 GOGET 					:= go get -u
 GOINSTALL   			:= go install
 GOCLEAN   				:= go clean
-GOFMT 					:= go fmt
+GOFMT 					:= gofmt -s -w
 GOLANGCLILINT			:= golangci-lint run
 GOLINT					:= golint
 GOVET       			:= go vet
@@ -33,7 +33,7 @@ install:
 	@$(GOINSTALL) ./...
 
 fmt:
-	@$(GOFMT) $(GODIRS)
+	@$(GOFMT) $(addprefix /go/src/,$(shell go list $(GODIRS)))
 
 lint:
 	@$(GOLANGCLILINT) $(GODIRS)

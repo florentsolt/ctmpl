@@ -1,12 +1,12 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/florentsolt/gotmpl/template"
 	"io/ioutil"
 	"log"
 	"strings"
-	"flag"
 )
 
 func main() {

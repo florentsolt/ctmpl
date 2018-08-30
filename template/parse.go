@@ -33,13 +33,13 @@ func escapeBacktick(str string) string {
 
 const (
 	// StartWrite is what starts a writing sequence in the buffer
-	StartWrite       = "\tbuffer.WriteString(`"
+	StartWrite = "\tbuffer.WriteString(`"
 	// CloseWrite is what ends a writing sequence in the buffer
-	CloseWrite       = "`)\n"
+	CloseWrite = "`)\n"
 	// StartCustomWrite is what starts a custom (ie not a strinc) sequence in the buffer (for ex. an expression)
 	StartCustomWrite = "\tbuffer.WriteString("
 	// ResumeWrite is usually ends a custom write and goes back to a normal writing
-	ResumeWrite      = ")\n\tbuffer.WriteString(`"
+	ResumeWrite = ")\n\tbuffer.WriteString(`"
 )
 
 func (template *Template) replaceExpressions(text string) string {

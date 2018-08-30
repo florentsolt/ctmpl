@@ -2,10 +2,12 @@
 // DO NOT EDIT, I MEAN IT'S USELESS :)
 
 package gotmpl
+
 import (
 	__bytes "bytes"
 	"github.com/florentsolt/gotmpl/template/testdata/benchmark/model"
 )
+
 func SimpleQtc(u *model.User, buffer *__bytes.Buffer) {
 	buffer.WriteString(`<html>
     <body>
@@ -17,12 +19,12 @@ func SimpleQtc(u *model.User, buffer *__bytes.Buffer) {
         <ul>
             `)
 	for _, colorName := range u.FavoriteColors {
-	buffer.WriteString(`
+		buffer.WriteString(`
                 <li>`)
-	buffer.WriteString(colorName)
-	buffer.WriteString(`</li>
+		buffer.WriteString(colorName)
+		buffer.WriteString(`</li>
             `)
-}
+	}
 	buffer.WriteString(`
         </ul>
     </body>

@@ -18,7 +18,7 @@ func New() *Template {
 		},
 		Trim:  false,
 		Debug: false,
-		Expr: "$",
-		Tag: "go",
+		Expr:  "$",
+		Tag:   "go",
 	}
 }
