@@ -11,9 +11,9 @@ import (
 
 func main() {
 	trim := flag.Bool("trim", false, "Enable trim")
-	pkg := flag.String("package", "", "Specifiy package name")
-	expr := flag.String("expr", "$", "Specifiy epxression token")
-	tag := flag.String("tag", "go", "Specifiy tag name")
+	pkg := flag.String("package", "", "Specify package name")
+	expr := flag.String("expr", "$", "Specify epxression token")
+	tag := flag.String("tag", "go", "Specify tag name")
 	flag.Parse()
 
 	files, err := ioutil.ReadDir(".")
